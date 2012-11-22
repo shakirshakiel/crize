@@ -1,0 +1,63 @@
+<html>
+<head>
+	<script src='./jquery.min.js' type='text/javascript'></script>
+	<script src='./jquery.Jcrop.js' type='text/javascript'></script>
+	<script type='text/javascript'>
+		$(document).ready(function(){
+			var modifedImage;
+			var updatedCoords;
+			
+			$("#crop").click(function(){
+				canvas = $("canvas")[0]
+				ctx = canvas.getContext("2d");
+				imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+				ctx.clearRect(0,0, canvas.width, canvas.height);
+				ctx.putImageData(imageData, 0, 0, updatedCoords.x, updatedCoords.y, updatedCoords.w, updatedCoords.h);
+				return false;
+			});
+
+			$("#resize").click(function(){
+				canvas = $("canvas")[0]
+				ctx = canvas.getContext("2d");
+				ctx.clearRect(0,0, 1024, 768);
+				ctx.drawImage(modifedImage, 0, 0 , $("#width").val(), $("#height").val());			
+				return false;
+			});
+			
+			$('input[type="file"]').change(function(){
+				fileReader = new FileReader;
+				fileReader.onload = function() {
+					modifedImage = new Image;
+					modifedImage.src = this.result;
+					ctx = $("canvas")[0].getContext("2d");
+					ctx.clearRect(0,0, 1024, 768);
+					ctx.drawImage(modifedImage, 0 , 0);
+				}
+				fileReader.readAsDataURL(this.files[0]);
+			});
+			
+			$("canvas").Jcrop({
+				onSelect: function(coords){
+					updatedCoords = coords;
+				}
+			});			
+		});
+		
+	</script>
+	<link rel="stylesheet" href="./jquery.Jcrop.css" type="text/css" />
+</head>
+<body>
+	<input type='file'>
+	<label for='width'>Width : </label>
+	<input type="text" name='width' id="width" value="100"/>
+	<label for='height'>Height : </label>
+	<input type="text" name='height' id="height" value="200"/>
+	<input type="button" id="resize" value="Resize"/>
+	<input type="button" id="crop" value="Crop"/>
+	<div>
+		<canvas width="1024" height="768"></canvas>
+	</div>
+</body>
+</html>
+
+
