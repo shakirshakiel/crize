@@ -4,14 +4,14 @@
 	<script src='./jquery.Jcrop.js' type='text/javascript'></script>
 	<script type='text/javascript'>
 		$(document).ready(function(){
-			var modifedImage;
-			var updatedCoords;
+			var modifedImage,
+				updatedCoords;
 			
 			$("#crop").click(function(){
-				canvas = $("canvas")[0]
+				canvas = $("canvas")[0];				
 				ctx = canvas.getContext("2d");
 				imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-				ctx.clearRect(0,0, canvas.width, canvas.height);
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
 				ctx.putImageData(imageData, 0, 0, updatedCoords.x, updatedCoords.y, updatedCoords.w, updatedCoords.h);
 				return false;
 			});
@@ -19,8 +19,14 @@
 			$("#resize").click(function(){
 				canvas = $("canvas")[0]
 				ctx = canvas.getContext("2d");
-				ctx.clearRect(0,0, 1024, 768);
-				ctx.drawImage(modifedImage, 0, 0 , $("#width").val(), $("#height").val());			
+				// imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+				image = new Image;
+				image.src = ctx.canvas.toDataURL();
+				image.width = $("#width").val();
+				image.height = $("#height").val();
+				$("body").append(image);
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				ctx.drawImage(image, 0, 0, $("#width").val(), $("#height").val());			
 				return false;
 			});
 			
@@ -29,18 +35,25 @@
 				fileReader.onload = function() {
 					modifedImage = new Image;
 					modifedImage.src = this.result;
-					ctx = $("canvas")[0].getContext("2d");
-					ctx.clearRect(0,0, 1024, 768);
-					ctx.drawImage(modifedImage, 0 , 0);
+					canvas = $("canvas")[0];
+					canvas.setAttribute('width', modifedImage.width);
+					canvas.setAttribute('height', modifedImage.height);					
+					ctx = canvas.getContext("2d");
+					ctx.clearRect(0, 0, canvas.width, canvas.height);
+					ctx.drawImage(modifedImage, 0, 0);
+					bindJcrop();
 				}
 				fileReader.readAsDataURL(this.files[0]);
 			});
 			
-			$("canvas").Jcrop({
-				onSelect: function(coords){
-					updatedCoords = coords;
-				}
-			});			
+			function bindJcrop() {
+				$("canvas").Jcrop({
+					onSelect: function(coords){
+						updatedCoords = coords;
+					}
+				});							
+			}
+			
 		});
 		
 	</script>
