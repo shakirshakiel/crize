@@ -5,28 +5,37 @@
 	<script type='text/javascript'>
 		$(document).ready(function(){
 			var modifedImage,
-				updatedCoords;
+				updatedCoords, 
+				jcropApi;
 			
 			$("#crop").click(function(){
-				canvas = $("canvas")[0];				
+				jcropApi.release();
+				jcropApi.disable();
+				canvas = $("canvas")[0];	
 				ctx = canvas.getContext("2d");
-				imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-				ctx.clearRect(0, 0, canvas.width, canvas.height);
-				ctx.putImageData(imageData, 0, 0, updatedCoords.x, updatedCoords.y, updatedCoords.w, updatedCoords.h);
+				imageData = ctx.getImageData(updatedCoords.x, updatedCoords.y, updatedCoords.w, updatedCoords.h);
+				canvas.setAttribute('width', updatedCoords.w);
+				canvas.setAttribute('height', updatedCoords.h);					
+				canvas.style.width = updatedCoords.w + 'px';
+				canvas.style.height = updatedCoords.h + 'px';				
+				ctx.putImageData(imageData, 0, 0);
 				return false;
 			});
 
 			$("#resize").click(function(){
-				canvas = $("canvas")[0]
-				ctx = canvas.getContext("2d");
-				// imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+				jcropApi.release();
+				jcropApi.disable();
+				canvas = $("canvas")[0];
 				image = new Image;
-				image.src = ctx.canvas.toDataURL();
-				image.width = $("#width").val();
-				image.height = $("#height").val();
-				$("body").append(image);
-				ctx.clearRect(0, 0, canvas.width, canvas.height);
-				ctx.drawImage(image, 0, 0, $("#width").val(), $("#height").val());			
+				image.onload = function() {
+					canvas.setAttribute('width', $("#width").val());
+					canvas.setAttribute('height', $("#height").val());					
+					canvas.style.width = $("#width").val() + 'px';
+					canvas.style.height = $("#height").val() + 'px';
+					ctx = canvas.getContext("2d");
+					ctx.drawImage(image, 0, 0, $("#width").val(), $("#height").val());				
+				}
+				image.src = canvas.toDataURL();
 				return false;
 			});
 			
@@ -34,14 +43,16 @@
 				fileReader = new FileReader;
 				fileReader.onload = function() {
 					modifedImage = new Image;
+					modifedImage.onload = function() {
+						canvas = $("canvas")[0];
+						canvas.setAttribute('width', modifedImage.width);
+						canvas.setAttribute('height', modifedImage.height);					
+						ctx = canvas.getContext("2d");
+						ctx.clearRect(0, 0, canvas.width, canvas.height);
+						ctx.drawImage(modifedImage, 0, 0);
+						bindJcrop();						
+					}
 					modifedImage.src = this.result;
-					canvas = $("canvas")[0];
-					canvas.setAttribute('width', modifedImage.width);
-					canvas.setAttribute('height', modifedImage.height);					
-					ctx = canvas.getContext("2d");
-					ctx.clearRect(0, 0, canvas.width, canvas.height);
-					ctx.drawImage(modifedImage, 0, 0);
-					bindJcrop();
 				}
 				fileReader.readAsDataURL(this.files[0]);
 			});
@@ -51,6 +62,8 @@
 					onSelect: function(coords){
 						updatedCoords = coords;
 					}
+				}, function() {
+					jcropApi = this;
 				});							
 			}
 			
