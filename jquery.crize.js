@@ -53,7 +53,26 @@
     },
 
     _bindResize:function () {
-
+      var widget = this;
+      $("#resize").click(function () {
+        widget.jcropApi.release();
+        widget.jcropApi.disable();
+        var canvas = widget.element.find("canvas")[0],
+            ctx = canvas.getContext("2d"),
+            image = new Image,
+            width = widget.element.find("#width").val(),
+            height = widget.element.find("#height").val();
+        image.onload = function () {
+          canvas.setAttribute('width', width);
+          canvas.setAttribute('height', height);
+          canvas.style.width = width + 'px';
+          canvas.style.height = height + 'px';
+          ctx.drawImage(image, 0, 0, width, height);
+          widget.jcropApi.enable();
+        }
+        image.src = canvas.toDataURL();
+        return false;
+      });
     },
 
     _bindFileUpload:function () {
