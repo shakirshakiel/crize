@@ -19,6 +19,7 @@
 				canvas.style.width = updatedCoords.w + 'px';
 				canvas.style.height = updatedCoords.h + 'px';				
 				ctx.putImageData(imageData, 0, 0);
+				jcropApi.enable();
 				return false;
 			});
 
@@ -33,7 +34,8 @@
 					canvas.style.width = $("#width").val() + 'px';
 					canvas.style.height = $("#height").val() + 'px';
 					ctx = canvas.getContext("2d");
-					ctx.drawImage(image, 0, 0, $("#width").val(), $("#height").val());				
+					ctx.drawImage(image, 0, 0, $("#width").val(), $("#height").val());	
+					jcropApi.enable();
 				}
 				image.src = canvas.toDataURL();
 				return false;
@@ -59,18 +61,24 @@
 			
 			function bindJcrop() {
 				$("canvas").Jcrop({
+					aspectRatio: 16 / 9,
+					bgColor: "white",
+					bgOpacity: 0.3,
 					onSelect: function(coords){
 						updatedCoords = coords;
 					}
 				}, function() {
 					jcropApi = this;
-				});							
+				});
 			}
 			
 		});
 		
 	</script>
 	<link rel="stylesheet" href="./jquery.Jcrop.css" type="text/css" />
+	<style type='text/css'>
+		.jcrop-holder > div { border: 1px solid black;}
+	</style>
 </head>
 <body>
 	<input type='file'>
