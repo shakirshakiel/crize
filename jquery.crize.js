@@ -11,9 +11,10 @@
           'Save': widget._save.bind(widget)
         }
       });
-      this._bindCrop();
+      this.element.find('#crop').click(this._crop.bind(this));
       this._bindResize();
       this._bindFileUpload();
+      this.canvas = this.element.find("canvas")[0];
     },
 
     _save: function(){
@@ -34,27 +35,24 @@
       this.element.html(html);
     },
 
-    _bindCrop:function () {
-      var element = this.element,
-          widget = this;
-      element.find("#crop").click(function () {
-        widget.jcropApi.release();
-        widget.jcropApi.disable();
-        var canvas = element.find("canvas")[0],
-            ctx = canvas.getContext("2d"),
-            croppedCoords = widget.croppedCoords,
-            width = croppedCoords.w,
-            height = croppedCoords.h,
-            imageData = ctx.getImageData(croppedCoords.x, croppedCoords.y, width, height);
+    _crop: function(){
+      this.jcropApi.release();
+      this.jcropApi.disable();
+      var ctx = this.canvas.getContext("2d");
+      var croppedCoords = this.croppedCoords;
+      var imageData = ctx.getImageData(croppedCoords.x, croppedCoords.y, croppedCoords.w, croppedCoords.h);
+      this._resizeCanvas(croppedCoords.w, croppedCoords.h);
+      ctx.putImageData(imageData, 0, 0);
+      this.jcropApi.enable();
+      return false;
+    },
 
-        canvas.setAttribute('width', width);
-        canvas.setAttribute('height', height);
-        canvas.style.width = width + 'px';
-        canvas.style.height = height + 'px';
-        ctx.putImageData(imageData, 0, 0);
-        widget.jcropApi.enable();
-        return false;
-      });
+    _resizeCanvas: function(width, height){
+      var canvas = this.canvas;
+      canvas.setAttribute('width', width);
+      canvas.setAttribute('height', height);
+      canvas.style.width = width + 'px';
+      canvas.style.height = height + 'px';
     },
 
     _bindResize:function () {
