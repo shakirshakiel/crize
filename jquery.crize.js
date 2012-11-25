@@ -1,20 +1,25 @@
 (function ($, undefined) {
   $.widget("ui.crize", {
-    options:{
-
-    },
-
-    _init:function () {
-      this.options.something = ""
+    _init:function() {
       this._buildHtml();
+      var widget = this;
       this.element.dialog({
         width:1024,
         height:768,
-        modal:true
+        modal:true,
+        buttons: {
+          'Save': widget._save.bind(widget)
+        }
       });
       this._bindCrop();
       this._bindResize();
       this._bindFileUpload();
+    },
+
+    _save: function(){
+      if(this.options.onsave)
+        this.options.onsave({croppedCoords: this.croppedCoords})
+      this.element.dialog('close');
     },
 
     _buildHtml:function () {

@@ -7,17 +7,12 @@
     <script type='text/javascript'>
         $(document).ready(function () {
             $("#open-crize").click(function () {
-                $("#crize").crize();
+              $("#crize").crize({onsave: function(x){console.log('save', x);}});
             });
         });
     </script>
     <link rel="stylesheet" href="./jquery-ui.css" type="text/css"/>
     <link rel="stylesheet" href="./jquery.Jcrop.css" type="text/css"/>
-    <style type='text/css'>
-        .jcrop-holder > div {
-            border: 1px solid black;
-        }
-    </style>
 </head>
 <body>
 <input type="button" id="open-crize" value="Open Crize"/>
