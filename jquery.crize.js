@@ -19,7 +19,7 @@
 
     _save: function(){
       if(this.options.onsave)
-        this.options.onsave({croppedCoords: this.croppedCoords})
+        this.options.onsave({croppedCoords: this.croppedCoords, imageDataUrl: this.canvas.toDataURL()})
       this.element.dialog('close');
     },
 
