@@ -1,9 +1,22 @@
 describe("Crize", function() {
   beforeEach(function() {
-    console.log('before each');
+    $('#fixture').remove();
+    $('body').append('<div id="fixture">...</div>');
   });
 
-  it("should be true", function() {
-    expect(true).toBe(true);
+  describe('on save callback', function(){
+    it("should be called if given", function() {
+      var onSaveCallback = jasmine.createSpy('saveCallback');
+      $("#fixture").crize({onsave: onSaveCallback});
+      $("button span:contains('Save')").click();
+      expect(onSaveCallback).toHaveBeenCalled();
+    });
+
+    it("should not throw error called if not given", function() {
+      $("#fixture").crize();
+      expect(function(){
+        $("button span:contains('Save')").click();
+      }).not.toThrow();
+    });
   });
 });
