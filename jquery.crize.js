@@ -67,38 +67,31 @@
       ctx = this.canvas.getContext('2d'),
       widget = this;
       image.onload = function () {
+        if(!width) width = image.width;
+        if(!height) height = image.height;
         widget._resizeCanvas(width, height);
         ctx.clearRect(0, 0, widget.canvas.width, widget.canvas.height);
         ctx.drawImage(image, 0, 0, width, height);
+        widget._bindJcrop();
       }
       image.src = imageDataUrl;
     },
 
-    _bindFileUpload:function () {
-      var widget = this,
-          element = this.element;
-      element.find('input[type="file"]').change(function () {
+    _bindFileUpload:function(){
+      var widget = this;
+      this.element.find('input[type="file"]').change(function () {
         var fileReader = new FileReader;
-        fileReader.onload = function () {
-          var modifiedImage = new Image, canvas, ctx;
-          modifiedImage.onload = function () {
-            canvas = $("canvas")[0];
-            canvas.setAttribute('width', modifiedImage.width);
-            canvas.setAttribute('height', modifiedImage.height);
-            ctx = canvas.getContext("2d");
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(modifiedImage, 0, 0);
-            widget._bindJcrop();
-          }
-          modifiedImage.src = this.result;
+        fileReader.onload = function(){
+          widget._drawImage(this.result);
         }
         fileReader.readAsDataURL(this.files[0]);
       });
     },
 
     _bindJcrop:function () {
+      if(this.jcropApi) return;
       var widget = this,
-          element = this.element;
+      element = this.element;
       element.find("canvas").Jcrop({
         aspectRatio:16 / 9,
         bgColor:"white",
@@ -109,10 +102,6 @@
       }, function () {
         widget.jcropApi = this;
       });
-
     }
-
   });
-
-
 })(jQuery);
