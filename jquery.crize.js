@@ -12,7 +12,7 @@
         }
       });
       this.element.find('#crop').click(this._crop.bind(this));
-      this._bindResize();
+      this.element.find('#resize').click(this._resize.bind(this));
       this._bindFileUpload();
       this.canvas = this.element.find("canvas")[0];
     },
@@ -47,6 +47,13 @@
       return false;
     },
 
+    _resize: function() {
+      var width = this.element.find("#width").val(),
+          height = this.element.find("#height").val();
+      this._drawImage(this.canvas.toDataURL(), width, height);
+      return false;
+    },
+
     _resizeCanvas: function(width, height){
       var canvas = this.canvas;
       canvas.setAttribute('width', width);
@@ -55,24 +62,16 @@
       canvas.style.height = height + 'px';
     },
 
-    _bindResize:function () {
-      var widget = this;
-      $("#resize").click(function () {
-        var canvas = widget.element.find("canvas")[0],
-            ctx = canvas.getContext("2d"),
-            image = new Image,
-            width = widget.element.find("#width").val(),
-            height = widget.element.find("#height").val();
-        image.onload = function () {
-          canvas.setAttribute('width', width);
-          canvas.setAttribute('height', height);
-          canvas.style.width = width + 'px';
-          canvas.style.height = height + 'px';
-          ctx.drawImage(image, 0, 0, width, height);
-        }
-        image.src = canvas.toDataURL();
-        return false;
-      });
+    _drawImage: function(imageDataUrl, width, height){
+      var image = new Image,
+      ctx = this.canvas.getContext('2d'),
+      widget = this;
+      image.onload = function () {
+        widget._resizeCanvas(width, height);
+        ctx.clearRect(0, 0, widget.canvas.width, widget.canvas.height);
+        ctx.drawImage(image, 0, 0, width, height);
+      }
+      image.src = imageDataUrl;
     },
 
     _bindFileUpload:function () {
