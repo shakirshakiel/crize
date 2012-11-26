@@ -19,7 +19,7 @@
 
     _save: function(){
       if(this.options.onsave)
-        this.options.onsave({croppedCoords: this.croppedCoords, imageDataUrl: this.canvas.toDataURL()})
+        this.options.onsave({croppedCoords: this.croppedCoords, imageDataUrl: this.canvas.toDataURL('image/'+this.imageType)})
       this.element.dialog('close');
     },
 
@@ -84,6 +84,9 @@
         fileReader.onload = function(){
           widget._drawImage(this.result);
         }
+        var fileType = this.files[0].type;
+        if(fileType.split('/')[0] != 'image') return;
+        widget.imageType = fileType.split('/')[1];
         fileReader.readAsDataURL(this.files[0]);
       });
     },
