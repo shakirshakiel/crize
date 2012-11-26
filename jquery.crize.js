@@ -92,7 +92,6 @@
     },
 
     _bindJcrop:function () {
-      if(this.jcropApi) return;
       var widget = this,
       element = this.element;
       element.find("canvas").Jcrop({
