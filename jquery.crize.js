@@ -9,7 +9,9 @@
         modal:true,
         buttons: {
           'Save': widget._save.bind(widget)
-        }
+        },
+        draggable:false,
+        resizable:false
       });
       this.element.find('#crop').click(this._crop.bind(this));
       this.element.find('#resize').click(this._resize.bind(this));
